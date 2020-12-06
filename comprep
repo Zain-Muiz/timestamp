@@ -1,0 +1,32 @@
+if($userlevel>=16){
+    $sql ="SELECT * FROM comprep WHERE username=:username";
+    $query= $dbh -> prepare($sql);
+    $query-> bindParam(':username', $username, PDO::PARAM_STR);
+    $query-> execute();
+    $results=$query->fetchAll(PDO::FETCH_OBJ);
+    $fcount = $results[0]->fcount;
+    
+    if($fcount==0){
+        $fcount=1;
+        $timestamp = time();
+        $sql ="UPDATE `comprep` SET fcount=:fcount ,wintime = :wintime WHERE username = :email" ;
+        $query= $dbh -> prepare($sql);
+        $query-> bindParam(':email', $username, PDO::PARAM_STR);
+        $query-> bindParam(':fcount', $fcount, PDO::PARAM_STR);
+        $query-> bindParam(':wintime', $timestamp, PDO::PARAM_STR);
+        
+        $check = $query-> execute();
+        if($check)
+             {  
+             echo "<script type='text/javascript'> document.location = 'thankyou.php'; </script>";
+            }   
+         else
+            {
+            print_r( $query->errorInfo() );
+            echo "Something went wrong. Please submit and try again";
+            }
+        }
+    else{
+    echo "<script type='text/javascript'> document.location = 'thankyou.php'; </script>";
+    }
+}
